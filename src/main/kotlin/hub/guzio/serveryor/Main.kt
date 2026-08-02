@@ -4,7 +4,7 @@ import net.fabricmc.api.ModInitializer
 import net.minecraft.resources.ResourceLocation
 import org.slf4j.LoggerFactory
 
-object Serveryor : ModInitializer {
+object Main : ModInitializer {
 	const val MOD_ID: String = "serveryor"
 
 	private val LOGGER = LoggerFactory.getLogger(MOD_ID)

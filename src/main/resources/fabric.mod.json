@@ -3,21 +3,21 @@
 	"id": "serveryor",
 	"version": "${version}",
 	"name": "Serveryor",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "A web-map frontend for Surveyor Map Framework",
 	"authors": [
-		"Me!"
+		"Guzio"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/GuzioMG/Serveryor",
+		"sources": "https://github.com/GuzioMG/Serveryor"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/serveryor/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 			{
-				"value": "hub.guzio.serveryor.Serveryor",
+				"value": "hub.guzio.serveryor.Main",
 				"adapter": "kotlin"
 			}
 		]
@@ -27,8 +27,9 @@
 	],
 	"depends": {
 		"fabricloader": ">=0.19.3",
-		"minecraft": "~1.21.1",
+		"minecraft": ">=1.21.1",
 		"java": ">=21",
+		"surveyor":">=1.2.4",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*"
 	}

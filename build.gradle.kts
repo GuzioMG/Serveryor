@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.net.URI
 
 plugins {
 	id("net.fabricmc.fabric-loom-remap")
@@ -10,22 +11,34 @@ version = providers.gradleProperty("mod_version").get()
 group = providers.gradleProperty("maven_group").get()
 
 repositories {
+	// Default docs:
 	// Add repositories to retrieve artifacts from in here.
 	// You should only use this when depending on other mods because
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
+
+	// Surveyor Repo:
+	maven { url = URI("https://repo.sleeping.town/") }
 }
 
 dependencies {
 	// To change the versions see the gradle.properties file
+
+	//Core:
 	minecraft("com.mojang:minecraft:${providers.gradleProperty("minecraft_version").get()}")
     mappings(loom.officialMojangMappings())
 	modImplementation("net.fabricmc:fabric-loader:${providers.gradleProperty("loader_version").get()}")
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
+
+	// Fabric API. This is technically optional, but you probably want it anyway:
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${providers.gradleProperty("fabric_api_version").get()}")
+
+	//Kotlin:
     modImplementation("net.fabricmc:fabric-language-kotlin:${providers.gradleProperty("fabric_kotlin_version").get()}")
+
+	// Surveyor:
+	modImplementation("folk.sisby:surveyor:1.2.4+1.21")
 }
 
 tasks.processResources {
