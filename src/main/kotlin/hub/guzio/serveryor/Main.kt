@@ -1,6 +1,7 @@
 package hub.guzio.serveryor
 
 import folk.sisby.surveyor.WorldSummary
+import io.ktor.http.ContentType
 import org.slf4j.LoggerFactory
 
 import io.ktor.server.application.*
@@ -14,11 +15,11 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents
 
 import net.minecraft.resources.ResourceKey
-import net.minecraft.resources.ResourceLocation
 import net.minecraft.world.level.Level
 
 object Main : ModInitializer {
 	const val MOD_ID: String = "serveryor"
+	val SITE = String(javaClass.classLoader.getResourceAsStream("assets/serveryor/index.html")?.readAllBytes() ?: "There must've been an error when loading Serveryor and the default index.html couldn't be extracted from its JAR. Please contact the server admin if you're seeing this error while viewing the map of some server, or (if this is singleplayer / you're the admin and are sure you didn't mess anything up) contact Serveryor devs on GitHub.".encodeToByteArray())
 
 	private val LOGGER = LoggerFactory.getLogger(MOD_ID)
 	private val LEVELS = HashMap<ResourceKey<Level>, Level>()
@@ -67,7 +68,10 @@ fun Application.rootModule() {
 fun Application.configureRouting() {
 	routing {
 		get("/") {
-			call.respondText("Hello, World!")
+			call.respondText(Main.SITE, contentType = if (Main.SITE.startsWith("<!DOCTYPE html>")) ContentType.Text.Html else ContentType.Text.Plain)
+		}
+		get("/index.html") {
+			call.respondText(Main.SITE, contentType = if (Main.SITE.startsWith("<!DOCTYPE html>")) ContentType.Text.Html else ContentType.Text.Plain)
 		}
 	}
 }
