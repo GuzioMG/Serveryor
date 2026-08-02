@@ -13,5 +13,15 @@ pluginManagement {
 	}
 }
 
+dependencyResolutionManagement {
+	repositories {
+		mavenCentral()
+	}
+	versionCatalogs {
+		create("ktorLibs").from("io.ktor:ktor-version-catalog:3.5.0")
+	}
+}
+
+
 // Should match your modid
 rootProject.name = "serveryor"

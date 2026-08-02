@@ -20,6 +20,19 @@ repositories {
 
 	// Surveyor Repo:
 	maven { url = URI("https://repo.sleeping.town/") }
+
+	// Other repositories can go above or below Modrinth's. We don't need priority :)
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Modrinth"
+				url = URI("https://api.modrinth.com/maven")
+			}
+		}
+		filter {
+			includeGroup("maven.modrinth")
+		}
+	}
 }
 
 dependencies {
@@ -30,15 +43,22 @@ dependencies {
     mappings(loom.officialMojangMappings())
 	modImplementation("net.fabricmc:fabric-loader:${providers.gradleProperty("loader_version").get()}")
 
-
 	// Fabric API. This is technically optional, but you probably want it anyway:
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${providers.gradleProperty("fabric_api_version").get()}")
 
 	//Kotlin:
     modImplementation("net.fabricmc:fabric-language-kotlin:${providers.gradleProperty("fabric_kotlin_version").get()}")
 
-	// Surveyor:
+	//Surveyor:
 	modImplementation("folk.sisby:surveyor:1.2.4+1.21")
+
+	//KTor:
+	implementation(ktorLibs.server.core)
+	implementation(ktorLibs.server.jetty)
+
+	//Extra things to auto-download by Fabric Loom; added here for convenience during dev (I need a map to compare to, and Mod Menu to see if I have all my metadata in check):
+	modImplementation("maven.modrinth:hoofprint:1.3.0+1.21")
+	modImplementation("maven.modrinth:modmenu:11.0.3")
 }
 
 tasks.processResources {
@@ -76,22 +96,5 @@ tasks.jar {
 
 	from("LICENSE") {
 		rename { "${it}_$projectName" }
-	}
-}
-
-// configure the maven publication
-publishing {
-	publications {
-		register<MavenPublication>("mavenJava") {
-			from(components["java"])
-		}
-	}
-
-	// See https://docs.gradle.org/current/userguide/publishing_maven.html for information on how to set up publishing.
-	repositories {
-		// Add repositories to publish to here.
-		// Notice: This block does NOT have the same function as the block in the top level.
-		// The repositories here will be used for publishing your artifact, not for
-		// retrieving dependencies.
 	}
 }
