@@ -40,14 +40,14 @@ dependencies {
 
 	//Core:
 	minecraft("com.mojang:minecraft:${providers.gradleProperty("minecraft_version").get()}")
-    mappings(loom.officialMojangMappings())
+	mappings(loom.officialMojangMappings())
 	modImplementation("net.fabricmc:fabric-loader:${providers.gradleProperty("loader_version").get()}")
 
 	// Fabric API. This is technically optional, but you probably want it anyway:
 	modImplementation("net.fabricmc.fabric-api:fabric-api:${providers.gradleProperty("fabric_api_version").get()}")
 
 	//Kotlin:
-    modImplementation("net.fabricmc:fabric-language-kotlin:${providers.gradleProperty("fabric_kotlin_version").get()}")
+	modImplementation("net.fabricmc:fabric-language-kotlin:${providers.gradleProperty("fabric_kotlin_version").get()}")
 
 	//Surveyor:
 	modImplementation("folk.sisby:surveyor:1.2.4+1.21")
