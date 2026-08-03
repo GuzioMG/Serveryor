@@ -1,4 +1,4 @@
-package hub.guzio.serveryor
+package hub.guzio.surwebyor
 
 import folk.sisby.surveyor.WorldSummary
 import io.nayuki.png.PngImage

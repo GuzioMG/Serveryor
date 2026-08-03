@@ -1,4 +1,4 @@
-package hub.guzio.serveryor
+package hub.guzio.surwebyor
 
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -22,23 +22,23 @@ import java.io.ByteArrayOutputStream
 import java.util.Objects
 
 object Main : ModInitializer {
-	const val MOD_ID: String = "serveryor"
-	val SITE = String(javaClass.classLoader.getResourceAsStream("assets/serveryor/index.html")?.readAllBytes() ?: "There must've been an error when loading Serveryor and the default index.html couldn't be extracted from its JAR. Please contact the server admin if you're seeing this error while viewing the map of some server, or (if this is singleplayer / you're the admin and are sure you didn't mess anything up) contact Serveryor devs on GitHub.".encodeToByteArray())
+	const val MOD_ID: String = "surwebyor"
+	val SITE = String(javaClass.classLoader.getResourceAsStream("assets/surwebyor/index.html")?.readAllBytes() ?: "There must've been an error when loading Surwebyor and the default index.html couldn't be extracted from its JAR. Please contact the server admin if you're seeing this error while viewing the map of some server, or (if this is singleplayer / you're the admin and are sure you didn't mess anything up) contact Surwebyor devs on GitHub.".encodeToByteArray())
 
 	private val LOGGER = LoggerFactory.getLogger(MOD_ID)
 	private val LEVELS = HashMap<ResourceKey<Level>, Level>()
 	private var SERVER: EmbeddedServer<JettyApplicationEngine, JettyApplicationEngineBase.Configuration>? = null
 
 	override fun onInitialize() {
-		LOGGER.info("Serveryor is registering events....")
+		LOGGER.info("Surwebyor is registering events....")
 
 		ServerWorldEvents.LOAD.register { _, level ->
-			LOGGER.info("Serveryor detected a new: "+level.dimension())
+			LOGGER.info("Surwebyor detected a new: "+level.dimension())
 			LEVELS[level.dimension()] = level
 		}
 
 		ServerWorldEvents.UNLOAD.register { _, level ->
-			LOGGER.info("Serveryor is unloading: "+level.dimension())
+			LOGGER.info("Surwebyor is unloading: "+level.dimension())
 			LEVELS.remove(level.dimension())
 		}
 
@@ -51,17 +51,17 @@ object Main : ModInitializer {
 				host = "0.0.0.0",
 				module = Application::rootModule
 			).start()
-			LOGGER.info("Serveryor is LIVE!")
+			LOGGER.info("Surwebyor is LIVE!")
 		}
 
 		ServerLifecycleEvents.SERVER_STOPPING.register { _ ->
-			LOGGER.info("Terminating Serveryor session...")
+			LOGGER.info("Terminating Surwebyor session...")
 			SERVER?.stop()
 			SERVER = null
-			LOGGER.info("Serveryor is DONE with you! >:(   (jk, it's still friendly - the current session isn't tho)")
+			LOGGER.info("Surwebyor is DONE with you! >:(   (jk, it's still friendly - the current session isn't tho)")
 		}
 
-		LOGGER.info("Serveryor is done starting.")
+		LOGGER.info("Surwebyor is done starting.")
 	}
 
 	fun getLevel(id: ResourceKey<Level>?): Level? {

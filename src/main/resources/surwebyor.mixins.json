@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "hub.guzio.serveryor.mixin",
+	"package": "hub.guzio.surwebyor.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
 		"ExampleMixin"

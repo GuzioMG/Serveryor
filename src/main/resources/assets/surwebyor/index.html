@@ -5,7 +5,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 	
-		<title>Loading Serveryor map...</title>
+		<title>Loading Surwebyor map...</title>
 
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -38,7 +38,7 @@
 			const popup = L.popup({maxWidth: 1000});
 			const tiles = L.tileLayer('/mapdata/minecraft/overworld/{x}/{y}/{z}/tile.png', {
 				maxZoom: 19, tms: true, maxNativeZoom: 4, minNativeZoom: 4,
-				attribution: 'Powered by <a href="https://github.com/GuzioMG/Serveryor">Serveryor</a> mod.'
+				attribution: 'Powered by <a href="https://github.com/GuzioMG/Surwebyor">Surwebyor</a> mod.'
 			}).addTo(map);
 		
 			map.on('click', (e) => popup.setLatLng(e.latlng).setContent(`X=${e.latlng.lng} / Y=${e.latlng.alt} / Z=${0-e.latlng.lat}`).openOn(map));

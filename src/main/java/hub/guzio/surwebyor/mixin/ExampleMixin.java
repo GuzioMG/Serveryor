@@ -1,4 +1,4 @@
-package hub.guzio.serveryor.mixin;
+package hub.guzio.surwebyor.mixin;
 
 import net.minecraft.server.MinecraftServer;
 import org.spongepowered.asm.mixin.Mixin;

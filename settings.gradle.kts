@@ -24,4 +24,4 @@ dependencyResolutionManagement {
 
 
 // Should match your modid
-rootProject.name = "serveryor"
+rootProject.name = "surwebyor"

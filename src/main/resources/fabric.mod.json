@@ -1,35 +1,35 @@
 {
 	"schemaVersion": 1,
-	"id": "serveryor",
+	"id": "surwebyor",
 	"version": "${version}",
-	"name": "Serveryor",
+	"name": "Surwebyor",
 	"description": "A web-map frontend for Surveyor Map Framework",
 	"authors": [
 		"Guzio"
 	],
 	"contact": {
-		"homepage": "https://github.com/GuzioMG/Serveryor",
-		"sources": "https://github.com/GuzioMG/Serveryor"
+		"homepage": "https://github.com/GuzioMG/Surwebyor",
+		"sources": "https://github.com/GuzioMG/Surwebyor"
 	},
 	"license": "MIT",
-	"icon": "assets/serveryor/icon.png",
+	"icon": "assets/surwebyor/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
 			{
-				"value": "hub.guzio.serveryor.Main",
+				"value": "hub.guzio.surwebyor.Main",
 				"adapter": "kotlin"
 			}
 		]
 	},
 	"mixins": [
-		"serveryor.mixins.json"
+		"surwebyor.mixins.json"
 	],
 	"depends": {
 		"fabricloader": ">=0.19.3",
 		"minecraft": ">=1.21.1",
 		"java": ">=21",
-		"surveyor":">=1.2.4",
+		"surveyor": ">=1.2.4",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*"
 	}
