@@ -5,7 +5,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 	
-		<title>Quick Start - Leaflet</title>
+		<title>Loading Serveryor map...</title>
 
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -26,43 +26,22 @@
 		<div id="map"></div>
 
 		<script>
-			const map = L.map('map').setView([51.505, -0.09], 13);
-		
-			const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				maxZoom: 19,
-				attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+			const zx = L.latLng;
+			function xz(x, z) {
+				if (Array.isArray(x)) {
+					return zx(x[1], x[0]);
+				}
+				return zx(z, x);
+			};
+
+			const map = L.map('map', {crs: L.CRS.Simple}).setView([0, 0], 13);
+			const popup = L.popup({maxWidth: 1000});
+			const tiles = L.tileLayer('/mapdata/minecraft/overworld/{x}/{y}/{z}/tile.png', {
+				maxZoom: 19, tms: true, maxNativeZoom: 4, minNativeZoom: 4,
+				attribution: 'Powered by <a href="https://github.com/GuzioMG/Serveryor">Serveryor</a> mod.'
 			}).addTo(map);
 		
-			const marker = L.marker([51.5, -0.09]).addTo(map)
-				.bindPopup('<b>Hello world!</b><br />I am a popup.').openPopup();
-		
-			const circle = L.circle([51.508, -0.11], {
-				color: 'red',
-				fillColor: '#f03',
-				fillOpacity: 0.5,
-				radius: 500
-			}).addTo(map).bindPopup('I am a circle.');
-		
-			const polygon = L.polygon([
-				[51.509, -0.08],
-				[51.503, -0.06],
-				[51.51, -0.047]
-			]).addTo(map).bindPopup('I am a polygon.');
-		
-		
-			const popup = L.popup()
-				.setLatLng([51.513, -0.09])
-				.setContent('I am a standalone popup.')
-				.openOn(map);
-		
-			function onMapClick(e) {
-				popup
-					.setLatLng(e.latlng)
-					.setContent(`You clicked the map at ${e.latlng.toString()}`)
-					.openOn(map);
-			}
-		
-			map.on('click', onMapClick);
+			map.on('click', (e) => popup.setLatLng(e.latlng).setContent(`X=${e.latlng.lng} / Y=${e.latlng.alt} / Z=${0-e.latlng.lat}`).openOn(map));
 		</script>
 	</body>
 </html>

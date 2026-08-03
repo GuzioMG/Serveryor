@@ -1,21 +1,25 @@
 package hub.guzio.serveryor
 
-import folk.sisby.surveyor.WorldSummary
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import org.slf4j.LoggerFactory
 
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.jetty.jakarta.*
-import io.ktor.server.response.respondText
+import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import io.nayuki.png.ImageEncoder
+import io.nayuki.png.chunk.Ihdr
 
 import net.fabricmc.api.ModInitializer
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerWorldEvents
+import net.fabricmc.fabric.api.event.lifecycle.v1.*
 
 import net.minecraft.resources.ResourceKey
+import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
+import java.io.ByteArrayOutputStream
+import java.util.Objects
 
 object Main : ModInitializer {
 	const val MOD_ID: String = "serveryor"
@@ -59,6 +63,18 @@ object Main : ModInitializer {
 
 		LOGGER.info("Serveryor is done starting.")
 	}
+
+	fun getLevel(id: ResourceKey<Level>?): Level? {
+		return if (Objects.isNull(id)) null
+		else LEVELS[id]
+	}
+
+	fun getLevelKey(namespace: String?, id: String?): ResourceKey<Level>? {
+		for (key in LEVELS.keys) {
+			if (key.location().path.equals(id) && key.location().namespace.equals(namespace)) return key
+		}
+		return null
+	}
 }
 
 fun Application.rootModule() {
@@ -72,6 +88,27 @@ fun Application.configureRouting() {
 		}
 		get("/index.html") {
 			call.respondText(Main.SITE, contentType = if (Main.SITE.startsWith("<!DOCTYPE html>")) ContentType.Text.Html else ContentType.Text.Plain)
+		}
+		get("/mapdata/{namespace}/{dimension}/{x}/{z}/{zoom}/tile.png") {
+			val params = call.parameters
+			val lvl = Main.getLevel(Main.getLevelKey(params["namespace"], params["dimension"]))
+			if (Objects.isNull(lvl)) {
+				call.respond(HttpStatusCode.NotFound)
+				return@get
+			}
+			val x = Integer.parseInt(params["x"])
+			val z = Integer.parseInt(params["z"])
+			val zoom = Integer.parseInt(params["zoom"])
+
+			val img = DataGetter.getImgOfChunk(lvl!!, ChunkPos(x, z), zoom)
+			if (Objects.isNull(img)) {
+				call.respond(HttpStatusCode.NotFound)
+				return@get
+			}
+			val png = ImageEncoder.toPng(img!!, Ihdr.InterlaceMethod.NONE)
+			val os = ByteArrayOutputStream()
+			png.write(os)
+			call.respondBytes(os.toByteArray(), contentType = ContentType.Image.PNG)
 		}
 	}
 }
