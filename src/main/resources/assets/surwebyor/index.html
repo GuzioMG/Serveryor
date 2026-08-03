@@ -19,6 +19,9 @@
 				width: 100%;
 				height: 100%;
 			}
+			.leaflet-tile-loaded {
+				image-rendering: pixelated;
+			}
 		</style>
 	</head>
 
@@ -34,10 +37,10 @@
 				return zx(z, x);
 			};
 
-			const map = L.map('map', {crs: L.CRS.Simple}).setView([0, 0], 13);
+			const map = L.map('map', {crs: L.CRS.Simple, zoomSnap: 0, zoomDelta: 0.25}).setView([0, 0], 4);
 			const popup = L.popup({maxWidth: 1000});
 			const tiles = L.tileLayer('/mapdata/minecraft/overworld/{x}/{y}/{z}/tile.png', {
-				maxZoom: 19, tms: true, maxNativeZoom: 4, minNativeZoom: 4,
+				tms: true, maxNativeZoom: 4, minNativeZoom: 2, maxZoom: 6,
 				attribution: 'Powered by <a href="https://github.com/GuzioMG/Surwebyor">Surwebyor</a> mod.'
 			}).addTo(map);
 		
