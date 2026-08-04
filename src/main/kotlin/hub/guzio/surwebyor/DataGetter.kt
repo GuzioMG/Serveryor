@@ -1,9 +1,16 @@
 package hub.guzio.surwebyor
 
+
 import folk.sisby.surveyor.WorldSummary
+import folk.sisby.surveyor.util.RegionPos
+import folk.sisby.surveyor.util.RegistryPalette
 import io.nayuki.png.image.BufferedRgbaImage
+import net.minecraft.core.BlockPos
+import net.minecraft.core.Registry
+import net.minecraft.core.registries.Registries
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
+import net.minecraft.world.level.material.MapColor
 import java.util.Objects
 
 object DataGetter {
@@ -17,29 +24,62 @@ object DataGetter {
             val bottomLeftCorner = getImgOfChunk(dim, ChunkPos(2*coords.x, 2*coords.z+1), zoom+1)
             val bottomRightCorner = getImgOfChunk(dim, ChunkPos(2*coords.x+1, 2*coords.z+1), zoom+1)
 
+            if (Objects.isNull(topLeftCorner) && Objects.isNull(topRightCorner) && Objects.isNull(bottomLeftCorner) && Objects.isNull(bottomRightCorner)) return null
+
             val img = squishImgOntoImg(topLeftCorner, BufferedRgbaImage(16, 16, arrayOf(8, 8, 8, 0).toIntArray()), 0, 0)
             squishImgOntoImg(topRightCorner, img, 8, 0)
             squishImgOntoImg(bottomLeftCorner, img, 0, 8)
             return squishImgOntoImg(bottomRightCorner, img, 8, 8);
         }
 
-        val map = WorldSummary.of(dim)
+        val map = WorldSummary.of(dim).terrain()
         val min = dim.minBuildHeight
         val max = dim.maxBuildHeight
-        val terrainMap = map.terrain()?.get(coords)?.toSingleLayer(min, max, max)
+        val terrainMap = map?.get(coords)?.toSingleLayer(min, max, max)
+
         if (Objects.isNull(terrainMap)) return null
+        val x = coords.x*16
+        val z = coords.z*16
         val depthMap = terrainMap!!.depths
+        val biomeMap = terrainMap.biomes
+        val blockMap = terrainMap.blocks
+        val waterMap = terrainMap.waterDepths
         val existenceMap = terrainMap.exists
+        val biomePalette = map.getRegion(RegionPos.of(BlockPos(x, 0, z))).biomePalette!!// getBiomePalette(coords)
+        val blockPalette = map.getRegion(RegionPos.of(BlockPos(x, 0, z))).blockPalette!!// getBlockPalette(coords)
 
         val scalingFactor = 255*FIXED_POINT_PRECISION / (max-min)
         val img = BufferedRgbaImage(16, 16, arrayOf(8, 8, 8, 0).toIntArray())
 
-        for ((index, depth) in depthMap!!.withIndex()) {
+        for ((index, depth) in depthMap.withIndex()) {
             if (!existenceMap[index]) continue
+            val colorBase = if (waterMap[index] > 0) RGB.fromMc(biomePalette.byId(biomeMap[index])!!.waterColor)
+            else {
+            //* All of this is commented-out because blockPalette.byId(blockMap[index]) just doesn't seem to work. For some chunks, it returns the valid palette, but in others, the returned palette claims that leaves are amethyst and other broken data. For now, let's paint based on foliage colors.
+                val color = blockPalette.byId(blockMap[index])!!.defaultMapColor()
+                when (color.id) {
+                    MapColor.GRASS.id -> {
+                        val color = biomePalette.byId(biomeMap[index])!!.getGrassColor(1.0, 1.0)
+                        printPalette(biomePalette, "grass", coords, dim.registryAccess().registry(Registries.BIOME).orElseThrow(), index, biomeMap[index], biomeMap, color)
+                        RGB.fromMc(color) //„And though we're not sure what that data means...” ...We know it's multiplied by 0.0225 each (see: Go to Definition). So small values will probably be fine. I hope so.
+                    }
+                    MapColor.PLANT.id -> {
+                        val color = biomePalette.byId(biomeMap[index])!!.foliageColor
+                        printPalette(biomePalette, "plant", coords, dim.registryAccess().registry(Registries.BIOME).orElseThrow(), index, biomeMap[index], biomeMap, color)
+                        RGB.fromMc(color) //„And though we're not sure what that data means...” ...We know it's multiplied by 0.0225 each (see: Go to Definition). So small values will probably be fine. I hope so.
+                    }
+                    MapColor.NONE.id  -> RGB.fromWhite()
+                    else -> {
+                        val color = color.calculateRGBColor(MapColor.Brightness.HIGH)
+                        printPalette(blockPalette, "block", coords, dim.registryAccess().registry(Registries.BLOCK).orElseThrow(), index, blockMap[index], blockMap, color)
+                        RGB.fromMc(color) //„And though we're not sure what that data means...” ...We know it's multiplied by 0.0225 each (see: Go to Definition). So small values will probably be fine. I hope so.
+                    }
+                }
+            }
             val yLevel = max - depth
             val yFromBottom = yLevel-min
             val yScaled = yFromBottom*scalingFactor/FIXED_POINT_PRECISION
-            img.setPixel(index/16, index%16, yScaled.shl(16).toLong())
+            img.setPixel(index/16, index%16, colorBase.tint(yScaled.toUByte()).toPng())
         }
 
         return img
@@ -51,16 +91,28 @@ object DataGetter {
             if (Objects.isNull(source)) break
             var y = 0
             while (y<8) {
-                val topLeftPixel = source!!.getPixel(x*2, y*2).shr(16)
-                val topRightPixel = source.getPixel(x*2+1, y*2).shr(16)
-                val bottomLeftPixel = source.getPixel(x*2, y*2+1).shr(16)
-                val bottomRightPixel = source.getPixel(x*2+1, y*2+1).shr(16)
-                val avg = (topLeftPixel+topRightPixel+bottomLeftPixel+bottomRightPixel)/4
-                target.setPixel(x+xShit, y+yShift, avg.shl(16))
+                val topLeftPixel = RGB.fromPng(source!!.getPixel(x*2, y*2))
+                val topRightPixel = RGB.fromPng(source.getPixel(x*2+1, y*2))
+                val bottomLeftPixel = RGB.fromPng(source.getPixel(x*2, y*2+1))
+                val bottomRightPixel = RGB.fromPng(source.getPixel(x*2+1, y*2+1))
+                target.setPixel(x+xShit, y+yShift, RGB.fromAvg(arrayOf(topLeftPixel, topRightPixel, bottomLeftPixel, bottomRightPixel)).toPng())
                 y++
             }
             x++
         }
         return target
+    }
+
+    fun <T> printPalette(pal: RegistryPalette<T>.ValueView, of: String, coords: ChunkPos, globalPal: Registry<T>, chosen: Int, index: Int, candidates: IntArray, color: Int){
+        val entries = arrayOfNulls<String>(pal.size())
+        for ((index, entry) in pal.withIndex()){
+            entries[index] = globalPal.getKey(entry!!).toString()
+        }
+        println("DETAILED REPORT FOR BLOCK $chosen (${chosen/16}/${chosen%16} internally) OF CHUNK ${coords.x}/${coords.z}:\n"+
+                "* It shall be colored based on its $of-color.\n"+
+                "* The $of palette was ${pal.size()} entries long, and said entries were: ${entries.contentToString()}\n"+
+                "* From palette, entry no. $index (ie. ${entries[index]}) will be requested, among all ${candidates.contentToString()}\n"+
+                "* ...And its raw MC color is $color, which comes out to ${RGB.fromMc(color)}"
+        )
     }
 }
