@@ -2,11 +2,8 @@ package hub.guzio.surwebyor
 
 import folk.sisby.surveyor.WorldSummary
 import folk.sisby.surveyor.util.RegionPos
-import folk.sisby.surveyor.util.RegistryPalette
 import io.nayuki.png.image.BufferedRgbaImage
 import net.minecraft.core.BlockPos
-import net.minecraft.core.Registry
-import net.minecraft.core.registries.Registries
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
 import net.minecraft.world.level.material.MapColor
@@ -53,17 +50,15 @@ object DataGetter {
 
         for ((index, depth) in depthMap.withIndex()) {
             if (!existenceMap[index]) continue
-            val colorBase = if (waterMap[index] > 0) RGB.fromMc(biomePalette.byId(biomeMap[index])!!.waterColor)
+            val colorBase = if (waterMap[index] > 0) RGB.fromMc(biomePalette.byId(biomeMap[index])!!.waterColor) //We can't just rely on MapColor.WATER.id check below because Surveyor will cut straight through simple water blocks and return the seabed instead.
             else {
-                val color = blockPalette.byId(blockMap[index])!!.defaultMapColor()
-                when (color.id) {
+                val mapColor = blockPalette.byId(blockMap[index])!!.defaultMapColor()
+                when (mapColor.id) {
+                    MapColor.WATER.id -> RGB.fromMc(biomePalette.byId(biomeMap[index])!!.waterColor)
                     MapColor.GRASS.id -> RGB.fromMc(biomePalette.byId(biomeMap[index])!!.getGrassColor(1.0, 1.0)) //„And though we're not sure what that data means...” ...We know it's multiplied by 0.0225 each (see: Go to Definition). So small values will probably be fine. I hope so.
                     MapColor.PLANT.id -> RGB.fromMc(biomePalette.byId(biomeMap[index])!!.foliageColor)
                     MapColor.NONE.id  -> RGB.fromWhite()
-                    else -> {
-                        val color = color.calculateRGBColor(MapColor.Brightness.HIGH)
-                        RGB.fromMc(color)
-                    }
+                    else -> RGB.fromMc(mapColor.calculateRGBColor(MapColor.Brightness.HIGH))
                 }
             }
             val yLevel = max - depth
