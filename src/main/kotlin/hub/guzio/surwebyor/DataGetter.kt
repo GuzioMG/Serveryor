@@ -59,20 +59,20 @@ object DataGetter {
                 val color = blockPalette.byId(blockMap[index])!!.defaultMapColor()
                 when (color.id) {
                     MapColor.GRASS.id -> {
-                        val color = biomePalette.byId(biomeMap[index])!!.getGrassColor(1.0, 1.0)
+                        val color = biomePalette.byId(biomeMap[index])!!.getGrassColor(1.0, 1.0)  //„And though we're not sure what that data means...” ...We know it's multiplied by 0.0225 each (see: Go to Definition). So small values will probably be fine. I hope so.
                         printPalette(biomePalette, "grass", coords, dim.registryAccess().registry(Registries.BIOME).orElseThrow(), index, biomeMap[index], biomeMap, color)
-                        RGB.fromMc(color) //„And though we're not sure what that data means...” ...We know it's multiplied by 0.0225 each (see: Go to Definition). So small values will probably be fine. I hope so.
+                        RGB.fromMc(color)
                     }
                     MapColor.PLANT.id -> {
                         val color = biomePalette.byId(biomeMap[index])!!.foliageColor
                         printPalette(biomePalette, "plant", coords, dim.registryAccess().registry(Registries.BIOME).orElseThrow(), index, biomeMap[index], biomeMap, color)
-                        RGB.fromMc(color) //„And though we're not sure what that data means...” ...We know it's multiplied by 0.0225 each (see: Go to Definition). So small values will probably be fine. I hope so.
+                        RGB.fromMc(color)
                     }
                     MapColor.NONE.id  -> RGB.fromWhite()
                     else -> {
                         val color = color.calculateRGBColor(MapColor.Brightness.HIGH)
                         printPalette(blockPalette, "block", coords, dim.registryAccess().registry(Registries.BLOCK).orElseThrow(), index, blockMap[index], blockMap, color)
-                        RGB.fromMc(color) //„And though we're not sure what that data means...” ...We know it's multiplied by 0.0225 each (see: Go to Definition). So small values will probably be fine. I hope so.
+                        RGB.fromMc(color)
                     }
                 }
             }
