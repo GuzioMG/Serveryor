@@ -1,9 +1,8 @@
 package hub.guzio.surwebyor
 
-import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
-import org.slf4j.LoggerFactory
-
+import com.mojang.brigadier.arguments.IntegerArgumentType
+import com.mojang.brigadier.arguments.StringArgumentType
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
 import io.ktor.server.jetty.jakarta.*
@@ -11,21 +10,24 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.nayuki.png.ImageEncoder
 import io.nayuki.png.chunk.Ihdr
-
 import net.fabricmc.api.ModInitializer
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback
 import net.fabricmc.fabric.api.event.lifecycle.v1.*
-
+import net.minecraft.commands.Commands
+import net.minecraft.network.chat.Component
 import net.minecraft.resources.ResourceKey
 import net.minecraft.world.level.ChunkPos
 import net.minecraft.world.level.Level
+import org.slf4j.LoggerFactory
 import java.io.ByteArrayOutputStream
-import java.util.Objects
+import java.util.*
+
 
 object Main : ModInitializer {
 	const val MOD_ID: String = "surwebyor"
 	val SITE = String(javaClass.classLoader.getResourceAsStream("assets/surwebyor/index.html")?.readAllBytes() ?: "There must've been an error when loading Surwebyor and the default index.html couldn't be extracted from its JAR. Please contact the server admin if you're seeing this error while viewing the map of some server, or (if this is singleplayer / you're the admin and are sure you didn't mess anything up) contact Surwebyor devs on GitHub.".encodeToByteArray())
+	val LOGGER = LoggerFactory.getLogger(MOD_ID)
 
-	private val LOGGER = LoggerFactory.getLogger(MOD_ID)
 	private val LEVELS = HashMap<ResourceKey<Level>, Level>()
 	private var SERVER: EmbeddedServer<JettyApplicationEngine, JettyApplicationEngineBase.Configuration>? = null
 
@@ -33,17 +35,38 @@ object Main : ModInitializer {
 		LOGGER.info("Surwebyor is registering events....")
 
 		ServerWorldEvents.LOAD.register { _, level ->
-			LOGGER.info("Surwebyor detected a new: "+level.dimension())
+			LOGGER.info("Surwebyor detected a new: ${level.dimension()}")
 			LEVELS[level.dimension()] = level
 		}
 
 		ServerWorldEvents.UNLOAD.register { _, level ->
-			LOGGER.info("Surwebyor is unloading: "+level.dimension())
+			LOGGER.info("Surwebyor is unloading: ${level.dimension()}")
 			LEVELS.remove(level.dimension())
 		}
 
-		ServerLifecycleEvents.SERVER_STARTED.register { _ ->
-			LOGGER.info("Booting up the (web)server(yor)...")
+		CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
+            dispatcher.register(
+                Commands.literal("surwebyorchunkdebug")
+					.then(Commands.argument("namespace", StringArgumentType.string())
+					.then(Commands.argument("dimension", StringArgumentType.string())
+					.then(Commands.argument("chunk_x", IntegerArgumentType.integer())
+					.then(Commands.argument("chunk_z", IntegerArgumentType.integer())
+					.executes { context ->
+						val ns = context.getArgument("namespace", String::class.java)
+						val dm = context.getArgument("dimension", String::class.java)
+						val cx = context.getArgument("chunk_x", Int::class.java)
+						val cz = context.getArgument("chunk_z", Int::class.java)
+						val dim = getLevel(getLevelKey(ns, dm))
+						DataGetter.getImgOfChunk(dim!!, ChunkPos(cx, cz), 4, true)
+						LOGGER.info("Zabiję się...")
+						context.getSource().sendSuccess( { Component.literal("Debug printed in console.") }, false)
+						1
+                	}
+            )))))
+        }
+
+        ServerLifecycleEvents.SERVER_STARTED.register { _ ->
+			LOGGER.info("Booting up the Surweb(-server)yor...")
 			SERVER?.stop() //Just in case it was running for any reason...
 			SERVER = embeddedServer(
 				factory = Jetty,
@@ -100,7 +123,7 @@ fun Application.configureRouting() {
 			val z = Integer.parseInt(params["z"])
 			val zoom = Integer.parseInt(params["zoom"])
 
-			val img = DataGetter.getImgOfChunk(lvl!!, ChunkPos(x, z), zoom)
+			val img = DataGetter.getImgOfChunk(lvl!!, ChunkPos(x, z), zoom, false)
 			if (Objects.isNull(img)) {
 				call.respond(HttpStatusCode.NotFound)
 				return@get

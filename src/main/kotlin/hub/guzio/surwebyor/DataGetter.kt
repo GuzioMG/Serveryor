@@ -1,6 +1,5 @@
 package hub.guzio.surwebyor
 
-
 import folk.sisby.surveyor.WorldSummary
 import folk.sisby.surveyor.util.RegionPos
 import folk.sisby.surveyor.util.RegistryPalette
@@ -13,16 +12,21 @@ import net.minecraft.world.level.Level
 import net.minecraft.world.level.material.MapColor
 import java.util.Objects
 
+
 object DataGetter {
     const val FIXED_POINT_PRECISION = 100
 
-    fun getImgOfChunk(dim: Level, coords: ChunkPos, zoom: Int): BufferedRgbaImage? {
-        if (zoom > 4) return null
+    fun getImgOfChunk(dim: Level, coords: ChunkPos, zoom: Int, debug: Boolean): BufferedRgbaImage? {
+        Main.LOGGER.info("Am I still capable of joy?")
+        if (zoom > 4) {
+            Main.LOGGER.error("Reached code that should be unreachable in debug!")
+            return null
+        }
         if (zoom < 4){
-            val topLeftCorner = getImgOfChunk(dim, ChunkPos(2*coords.x, 2*coords.z), zoom+1)
-            val topRightCorner = getImgOfChunk(dim, ChunkPos(2*coords.x+1, 2*coords.z), zoom+1)
-            val bottomLeftCorner = getImgOfChunk(dim, ChunkPos(2*coords.x, 2*coords.z+1), zoom+1)
-            val bottomRightCorner = getImgOfChunk(dim, ChunkPos(2*coords.x+1, 2*coords.z+1), zoom+1)
+            val topLeftCorner = getImgOfChunk(dim, ChunkPos(2*coords.x, 2*coords.z), zoom+1, debug)
+            val topRightCorner = getImgOfChunk(dim, ChunkPos(2*coords.x+1, 2*coords.z), zoom+1, debug)
+            val bottomLeftCorner = getImgOfChunk(dim, ChunkPos(2*coords.x, 2*coords.z+1), zoom+1,debug)
+            val bottomRightCorner = getImgOfChunk(dim, ChunkPos(2*coords.x+1, 2*coords.z+1), zoom+1, debug)
 
             if (Objects.isNull(topLeftCorner) && Objects.isNull(topRightCorner) && Objects.isNull(bottomLeftCorner) && Objects.isNull(bottomRightCorner)) return null
 
@@ -37,7 +41,10 @@ object DataGetter {
         val max = dim.maxBuildHeight
         val terrainMap = map?.get(coords)?.toSingleLayer(min, max, max)
 
-        if (Objects.isNull(terrainMap)) return null
+        if (Objects.isNull(terrainMap)) {
+            if(debug) Main.LOGGER.warn("There is no data for the requested chunk.")
+            return null
+        }
         val x = coords.x*16
         val z = coords.z*16
         val depthMap = terrainMap!!.depths
@@ -52,26 +59,28 @@ object DataGetter {
         val img = BufferedRgbaImage(16, 16, arrayOf(8, 8, 8, 0).toIntArray())
 
         for ((index, depth) in depthMap.withIndex()) {
-            if (!existenceMap[index]) continue
+            if (!existenceMap[index]) {
+                if(debug) Main.LOGGER.info("Block $index (${index/16}/${index%16} doesn't exist.")
+                continue
+            }
             val colorBase = if (waterMap[index] > 0) RGB.fromMc(biomePalette.byId(biomeMap[index])!!.waterColor)
             else {
-            //* All of this is commented-out because blockPalette.byId(blockMap[index]) just doesn't seem to work. For some chunks, it returns the valid palette, but in others, the returned palette claims that leaves are amethyst and other broken data. For now, let's paint based on foliage colors.
                 val color = blockPalette.byId(blockMap[index])!!.defaultMapColor()
                 when (color.id) {
                     MapColor.GRASS.id -> {
                         val color = biomePalette.byId(biomeMap[index])!!.getGrassColor(1.0, 1.0)  //„And though we're not sure what that data means...” ...We know it's multiplied by 0.0225 each (see: Go to Definition). So small values will probably be fine. I hope so.
-                        printPalette(biomePalette, "grass", coords, dim.registryAccess().registry(Registries.BIOME).orElseThrow(), index, biomeMap[index], biomeMap, color)
+                        if(debug) printPalette(biomePalette, "grass", coords, dim.registryAccess().registry(Registries.BIOME).orElseThrow(), index, biomeMap[index], biomeMap, color)
                         RGB.fromMc(color)
                     }
                     MapColor.PLANT.id -> {
                         val color = biomePalette.byId(biomeMap[index])!!.foliageColor
-                        printPalette(biomePalette, "plant", coords, dim.registryAccess().registry(Registries.BIOME).orElseThrow(), index, biomeMap[index], biomeMap, color)
+                        if(debug) printPalette(biomePalette, "plant", coords, dim.registryAccess().registry(Registries.BIOME).orElseThrow(), index, biomeMap[index], biomeMap, color)
                         RGB.fromMc(color)
                     }
                     MapColor.NONE.id  -> RGB.fromWhite()
                     else -> {
                         val color = color.calculateRGBColor(MapColor.Brightness.HIGH)
-                        printPalette(blockPalette, "block", coords, dim.registryAccess().registry(Registries.BLOCK).orElseThrow(), index, blockMap[index], blockMap, color)
+                        if(debug) printPalette(blockPalette, "block", coords, dim.registryAccess().registry(Registries.BLOCK).orElseThrow(), index, blockMap[index], blockMap, color)
                         RGB.fromMc(color)
                     }
                 }
@@ -108,7 +117,7 @@ object DataGetter {
         for ((index, entry) in pal.withIndex()){
             entries[index] = globalPal.getKey(entry!!).toString()
         }
-        println("DETAILED REPORT FOR BLOCK $chosen (${chosen/16}/${chosen%16} internally) OF CHUNK ${coords.x}/${coords.z}:\n"+
+        Main.LOGGER.info("DETAILED REPORT FOR BLOCK $chosen (${chosen/16}/${chosen%16} internally) OF CHUNK ${coords.x}/${coords.z}:\n"+
                 "* It shall be colored based on its $of-color.\n"+
                 "* The $of palette was ${pal.size()} entries long, and said entries were: ${entries.contentToString()}\n"+
                 "* From palette, entry no. $index (ie. ${entries[index]}) will be requested, among all ${candidates.contentToString()}\n"+

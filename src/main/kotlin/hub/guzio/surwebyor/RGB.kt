@@ -1,5 +1,6 @@
 package hub.guzio.surwebyor
 
+
 const val BITMASK_MC_RED: Int = 16711680
 const val BITMASK_MC_GREEN: Int = 65280
 const val BITMASK_MC_BLUE: Int = 255
