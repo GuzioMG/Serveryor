@@ -42,8 +42,8 @@ object DataGetter {
         val blockMap = terrainMap.blocks
         val waterMap = terrainMap.waterDepths
         val existenceMap = terrainMap.exists
-        val biomePalette = map.getRegion(RegionPos.of(BlockPos(x, 0, z))).biomePalette!!// getBiomePalette(coords)
-        val blockPalette = map.getRegion(RegionPos.of(BlockPos(x, 0, z))).blockPalette!!// getBlockPalette(coords)
+        val biomePalette = map.getBiomePalette(coords)
+        val blockPalette = map.getBlockPalette(coords)
 
         val scalingFactor = 255*FIXED_POINT_PRECISION / (max-min)
         val img = BufferedRgbaImage(16, 16, arrayOf(8, 8, 8, 0).toIntArray())

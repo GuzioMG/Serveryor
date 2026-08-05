@@ -42,10 +42,10 @@
 			const popup = L.popup({maxWidth: 1000});
 			const tiles = L.tileLayer('/mapdata/minecraft/overworld/{x}/{y}/{z}/tile.png', {
 				tms: true, maxNativeZoom: 4, minNativeZoom: 2, maxZoom: 6,
-				attribution: 'Powered by <a href="https://github.com/GuzioMG/Surwebyor">Surwebyor</a> mod.'
+				attribution: '🇪🇺🇵🇱🦅 <a href="https://github.com/GuzioMG/Surwebyor">Surwebyor</a>'
 			}).addTo(map);
 		
-			map.on('click', (e) => popup.setLatLng(e.latlng).setContent(`X=${e.latlng.lng} / Y=${e.latlng.alt} / Z=${0-e.latlng.lat}`).openOn(map));
+			map.on('click', (e) => popup.setLatLng(e.latlng).setContent(`X=${e.latlng.lng} / Z=${0-e.latlng.lat}`).openOn(map));
 		</script>
 	</body>
 </html>
