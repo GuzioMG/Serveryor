@@ -50,15 +50,15 @@ object DataGetter {
 
         for ((index, depth) in depthMap.withIndex()) {
             if (!existenceMap[index]) continue
-            val colorBase = if (waterMap[index] > 0) RGB.fromMc(biomePalette.byId(biomeMap[index])!!.waterColor) //We can't just rely on MapColor.WATER.id check below because Surveyor will cut straight through simple water blocks and return the seabed instead.
+            val colorBase = if (waterMap[index] > 0) RGB.fromMc(biomePalette.byId(biomeMap[index])!!.waterColor, false) //We can't just rely on MapColor.WATER.id check below because Surveyor will cut straight through simple water blocks and return the seabed instead.
             else {
                 val mapColor = blockPalette.byId(blockMap[index])!!.defaultMapColor()
                 when (mapColor.id) {
-                    MapColor.WATER.id -> RGB.fromMc(biomePalette.byId(biomeMap[index])!!.waterColor)
-                    MapColor.GRASS.id -> RGB.fromMc(biomePalette.byId(biomeMap[index])!!.getGrassColor(1.0, 1.0)) //„And though we're not sure what that data means...” ...We know it's multiplied by 0.0225 each (see: Go to Definition). So small values will probably be fine. I hope so.
-                    MapColor.PLANT.id -> RGB.fromMc(biomePalette.byId(biomeMap[index])!!.foliageColor)
+                    MapColor.WATER.id -> RGB.fromMc(biomePalette.byId(biomeMap[index])!!.waterColor, false)
+                    //MapColor.GRASS.id -> RGB.fromMc(biomePalette.byId(biomeMap[index])!!.getGrassColor(1.0, 1.0)) //„And though we're not sure what that data means...” ...We know it's multiplied by 0.0225 each (see: Go to Definition). So small values will probably be fine. I hope so.
+                    //MapColor.PLANT.id -> RGB.fromMc(biomePalette.byId(biomeMap[index])!!.foliageColor)
                     MapColor.NONE.id  -> RGB.fromWhite()
-                    else -> RGB.fromMc(mapColor.calculateRGBColor(MapColor.Brightness.HIGH))
+                    else -> RGB.fromMc(mapColor.calculateRGBColor(MapColor.Brightness.HIGH), true)
                 }
             }
             val yLevel = max - depth

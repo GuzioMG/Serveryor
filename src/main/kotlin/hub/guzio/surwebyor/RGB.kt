@@ -14,7 +14,7 @@ const val BITMASK_PNG_RELEVANT: Long = BITMASK_PNG_RED.or(BITMASK_PNG_GREEN).or(
 data class RGB(val r: UByte, val g: UByte, val b: UByte) {
     companion object
 
-    fun tint(by: UByte): RGB{
+    fun tint(by: UByte): RGB {
         val scale = by.toDouble() / 255.0
         return RGB((r.toDouble()*scale).toInt().toUByte(), (g.toDouble()*scale).toInt().toUByte(), (b.toDouble()*scale).toInt().toUByte())
     }
@@ -28,7 +28,7 @@ data class RGB(val r: UByte, val g: UByte, val b: UByte) {
     }
 }
 
-fun RGB.Companion.fromMc(mcColor: Int): RGB {
+fun RGB.Companion.fromMc(mcColor: Int, swap: Boolean): RGB {
     val mcColorRGB = mcColor.and(BITMASK_MC_RELEVANT)
     val r = BITMASK_MC_RED.and(mcColorRGB)
     val g = BITMASK_MC_GREEN.and(mcColorRGB)
@@ -36,7 +36,8 @@ fun RGB.Companion.fromMc(mcColor: Int): RGB {
     val rB = r.shr(16).toUByte()
     val gB = g.shr(8).toUByte()
     val bB = b.toUByte()
-    return RGB(rB, gB, bB)
+    return if(!swap) RGB(rB, gB, bB)
+    else RGB(bB, gB, rB)
 }
 
 fun RGB.Companion.fromPng(pngColor: Long): RGB {
