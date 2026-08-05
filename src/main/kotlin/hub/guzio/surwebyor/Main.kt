@@ -44,27 +44,6 @@ object Main : ModInitializer {
 			LEVELS.remove(level.dimension())
 		}
 
-		CommandRegistrationCallback.EVENT.register { dispatcher, _, _ ->
-            dispatcher.register(
-                Commands.literal("surwebyorchunkdebug")
-					.then(Commands.argument("namespace", StringArgumentType.string())
-					.then(Commands.argument("dimension", StringArgumentType.string())
-					.then(Commands.argument("chunk_x", IntegerArgumentType.integer())
-					.then(Commands.argument("chunk_z", IntegerArgumentType.integer())
-					.executes { context ->
-						val ns = context.getArgument("namespace", String::class.java)
-						val dm = context.getArgument("dimension", String::class.java)
-						val cx = context.getArgument("chunk_x", Int::class.java)
-						val cz = context.getArgument("chunk_z", Int::class.java)
-						val dim = getLevel(getLevelKey(ns, dm))
-						DataGetter.getImgOfChunk(dim!!, ChunkPos(cx, cz), 4, true)
-						LOGGER.info("Zabiję się...")
-						context.getSource().sendSuccess( { Component.literal("Debug printed in console.") }, false)
-						1
-                	}
-            )))))
-        }
-
         ServerLifecycleEvents.SERVER_STARTED.register { _ ->
 			LOGGER.info("Booting up the Surweb(-server)yor...")
 			SERVER?.stop() //Just in case it was running for any reason...
@@ -123,7 +102,7 @@ fun Application.configureRouting() {
 			val z = Integer.parseInt(params["z"])
 			val zoom = Integer.parseInt(params["zoom"])
 
-			val img = DataGetter.getImgOfChunk(lvl!!, ChunkPos(x, z), zoom, false)
+			val img = DataGetter.getImgOfChunk(lvl!!, ChunkPos(x, z), zoom)
 			if (Objects.isNull(img)) {
 				call.respond(HttpStatusCode.NotFound)
 				return@get
