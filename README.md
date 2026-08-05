@@ -1,5 +1,5 @@
 # Surwebyor
-A web-map frontend for Surveyor Map Framework
+A web-map frontend for [Surveyor Map Framework](https://modrinth.com/mod/surveyor)
 
 ## WARNING: Early alpha alert!
 * Currently, there is no support for biome colors for plants/leaves/etc. and grass (water works, though), and every block uses its default map color (green, in case of the aforementioned blocks). This is due to the fact that Minecraft sets them all to `0` (pitch-black) when on the server. First, we'll add support for biome colors in singleplayer/LAN worlds, then we plan to add support for servers via some kind of JSON color export from the client. But neither exists in the mod right now; you gotta be patient.
@@ -13,7 +13,7 @@ A web-map frontend for Surveyor Map Framework
 * CurseForge support is not planned.
 
 Additionally, you'll need:
-* Surveyor
+* [Surveyor](https://modrinth.com/mod/surveyor)
 * A supported MC version (Fabric 1.22.1 only\* at the moment - higher versions are marked as supported in the JAR in case you want to try going higher, anyway, which **maybe** works because this mod almost doesn't interact with Minecraft APIs (the vast majority are Surveyor's), but it's untested and higher versions aren't marked as supported on Modrinth because of that)
 * Fabric API and Fabric Kotlin
 * \*Just like with Surveyor itself, NeoForge 1.21.1 via Sinytra is considered officially supported (though if you do that, please use Forgified Fabric API and Kotlin for Forge instead of Fabric API and Fabric Kotlin). Effectively, we treat Sinytra a library, no different from how other mod devs treat Cloth Config or Moonlight Lib.
