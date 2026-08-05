@@ -10,6 +10,7 @@ pluginManagement {
 
 	plugins {
 		id("net.fabricmc.fabric-loom-remap") version providers.gradleProperty("loom_version")
+		id("org.jetbrains.kotlin.plugin.serialization") version "1.6.21"
 	}
 }
 

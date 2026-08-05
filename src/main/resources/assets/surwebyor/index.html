@@ -5,7 +5,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 	
-		<title>Loading Surwebyor map...</title>
+		<title>$PAGETITLE</title>
 
 		<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 		<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -38,7 +38,7 @@
 				return zx(z, x);
 			};
 
-			const map = L.map('map', {crs: L.CRS.Simple, zoomSnap: 0, zoomDelta: 0.25}).setView([0, 0], 4);
+			const map = L.map('map', {crs: L.CRS.Simple, zoomSnap: 0, zoomDelta: 0.25}).setView([$POSZ, $POSX], 4);
 			const popup = L.popup({maxWidth: 1000});
 			const tiles = L.tileLayer('/mapdata/minecraft/overworld/{x}/{y}/{z}/tile.png', {
 				tms: true, maxNativeZoom: 4, minNativeZoom: 2, maxZoom: 6,

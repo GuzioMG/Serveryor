@@ -1,5 +1,7 @@
 package hub.guzio.surwebyor
 
+import kotlinx.serialization.Serializable
+
 
 const val BITMASK_MC_RED: Int = 16711680
 const val BITMASK_MC_GREEN: Int = 65280
@@ -11,6 +13,7 @@ const val BITMASK_PNG_GREEN: Long = 1095216660480
 const val BITMASK_PNG_BLUE: Long = 16711680
 const val BITMASK_PNG_RELEVANT: Long = BITMASK_PNG_RED.or(BITMASK_PNG_GREEN).or(BITMASK_PNG_BLUE)
 
+@Serializable
 data class RGB(val r: UByte, val g: UByte, val b: UByte) {
     companion object
 

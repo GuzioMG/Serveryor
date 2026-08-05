@@ -5,6 +5,7 @@ plugins {
 	id("net.fabricmc.fabric-loom-remap")
 	`maven-publish`
 	id("org.jetbrains.kotlin.jvm") version "2.4.10"
+	id("org.jetbrains.kotlin.plugin.serialization") version "1.6.21"
 }
 
 version = providers.gradleProperty("mod_version").get()
