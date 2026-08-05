@@ -50,15 +50,15 @@ object DataGetter {
 
         for ((index, depth) in depthMap.withIndex()) {
             if (!existenceMap[index]) continue
-            val colorBase = if (waterMap[index] > 0) RGB.fromMc(biomePalette.byId(biomeMap[index])!!.waterColor, false) //We can't just rely on MapColor.WATER.id check below because Surveyor will cut straight through simple water blocks and return the seabed instead.
+            val colorBase = if (waterMap[index] > 0) RGB.of(biomePalette.byId(biomeMap[index])!!.waterColor, false) //We can't just rely on MapColor.WATER.id check below because Surveyor will cut straight through simple water blocks and return the seabed instead.
             else {
                 val mapColor = blockPalette.byId(blockMap[index])!!.defaultMapColor()
                 when (mapColor.id) {
-                    MapColor.WATER.id -> RGB.fromMc(biomePalette.byId(biomeMap[index])!!.waterColor, false)
-                    //MapColor.GRASS.id -> RGB.fromMc(biomePalette.byId(biomeMap[index])!!.getGrassColor(1.0, 1.0)) //„And though we're not sure what that data means...” ...We know it's multiplied by 0.0225 each (see: Go to Definition). So small values will probably be fine. I hope so.
-                    //MapColor.PLANT.id -> RGB.fromMc(biomePalette.byId(biomeMap[index])!!.foliageColor)
-                    MapColor.NONE.id  -> RGB.fromWhite()
-                    else -> RGB.fromMc(mapColor.calculateRGBColor(MapColor.Brightness.HIGH), true)
+                    MapColor.WATER.id -> RGB.of(biomePalette.byId(biomeMap[index])!!.waterColor, false)
+                    //MapColor.GRASS.id -> RGB.of(biomePalette.byId(biomeMap[index])!!.getGrassColor(1.0, 1.0)) //„And though we're not sure what that data means...” ...We know it's multiplied by 0.0225 each (see: Go to Definition). So small values will probably be fine. I hope so.
+                    //MapColor.PLANT.id -> RGB.of(biomePalette.byId(biomeMap[index])!!.foliageColor)
+                    MapColor.NONE.id  -> RGB.of()
+                    else -> RGB.of(mapColor.calculateRGBColor(MapColor.Brightness.HIGH), true)
                 }
             }
             val yLevel = max - depth
@@ -76,11 +76,11 @@ object DataGetter {
             if (Objects.isNull(source)) break
             var y = 0
             while (y<8) {
-                val topLeftPixel = RGB.fromPng(source!!.getPixel(x*2, y*2))
-                val topRightPixel = RGB.fromPng(source.getPixel(x*2+1, y*2))
-                val bottomLeftPixel = RGB.fromPng(source.getPixel(x*2, y*2+1))
-                val bottomRightPixel = RGB.fromPng(source.getPixel(x*2+1, y*2+1))
-                target.setPixel(x+xShit, y+yShift, RGB.fromAvg(arrayOf(topLeftPixel, topRightPixel, bottomLeftPixel, bottomRightPixel)).toPng())
+                val topLeftPixel = RGB.of(source!!.getPixel(x*2, y*2))
+                val topRightPixel = RGB.of(source.getPixel(x*2+1, y*2))
+                val bottomLeftPixel = RGB.of(source.getPixel(x*2, y*2+1))
+                val bottomRightPixel = RGB.of(source.getPixel(x*2+1, y*2+1))
+                target.setPixel(x+xShit, y+yShift, RGB.of(arrayOf(topLeftPixel, topRightPixel, bottomLeftPixel, bottomRightPixel)).toPng())
                 y++
             }
             x++

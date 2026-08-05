@@ -28,7 +28,7 @@ data class RGB(val r: UByte, val g: UByte, val b: UByte) {
     }
 }
 
-fun RGB.Companion.fromMc(mcColor: Int, swap: Boolean): RGB {
+fun RGB.Companion.of(mcColor: Int, swap: Boolean): RGB {
     val mcColorRGB = mcColor.and(BITMASK_MC_RELEVANT)
     val r = BITMASK_MC_RED.and(mcColorRGB)
     val g = BITMASK_MC_GREEN.and(mcColorRGB)
@@ -40,7 +40,7 @@ fun RGB.Companion.fromMc(mcColor: Int, swap: Boolean): RGB {
     else RGB(bB, gB, rB)
 }
 
-fun RGB.Companion.fromPng(pngColor: Long): RGB {
+fun RGB.Companion.of(pngColor: Long): RGB {
     val pngColorRelevant = pngColor.and(BITMASK_PNG_RELEVANT)
     val r = BITMASK_PNG_RED.and(pngColorRelevant)
     val g = BITMASK_PNG_GREEN.and(pngColorRelevant)
@@ -51,7 +51,7 @@ fun RGB.Companion.fromPng(pngColor: Long): RGB {
     return RGB(rB, gB, bB)
 }
 
-fun RGB.Companion.fromAvg(of: Array<RGB>): RGB {
+fun RGB.Companion.of(of: Array<RGB>): RGB {
     var r = 0u
     var g = 0u
     var b = 0u
@@ -63,6 +63,6 @@ fun RGB.Companion.fromAvg(of: Array<RGB>): RGB {
     return RGB((r/of.size.toUInt()).toUByte(), (g/of.size.toUInt()).toUByte(), (b/of.size.toUInt()).toUByte())
 }
 
-fun RGB.Companion.fromWhite(): RGB {
-    return RGB(255.toUByte(), 255.toUByte(), 255.toUByte())
+fun RGB.Companion.of(): RGB {
+    return RGB(255u, 255u, 255u)
 }
