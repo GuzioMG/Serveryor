@@ -30,7 +30,14 @@
 		<div id="map"></div>
 
 		<script>
-			const zx = L.latLng;
+            function zx(z, x){
+				if (Array.isArray(x)) {
+					return L.latLng(-x[0], x[1]);
+				}
+				return L.latLng(-z, x);
+            }
+
+
 			function xz(x, z) {
 				if (Array.isArray(x)) {
 					return zx(x[1], x[0]);
@@ -38,7 +45,7 @@
 				return zx(z, x);
 			};
 
-			const map = L.map('map', {crs: L.CRS.Simple, zoomSnap: 0, zoomDelta: 0.25}).setView([$POSZ, $POSX], 4);
+			const map = L.map('map', {crs: L.CRS.Simple, zoomSnap: 0, zoomDelta: 0.25}).setView(xz($POSX, $POSZ), 4);
 			const popup = L.popup({maxWidth: 1000});
 			const tiles = L.tileLayer('/mapdata/minecraft/overworld/{x}/{y}/{z}/tile.png', {
 				tms: true, maxNativeZoom: 4, minNativeZoom: 2, maxZoom: 6,
