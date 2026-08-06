@@ -28,7 +28,7 @@ object Main : ModInitializer {
 	val SITE = String(javaClass.classLoader.getResourceAsStream("assets/surwebyor/index.html")?.readAllBytes() ?: "There must've been an error when loading Surwebyor and the default index.html couldn't be extracted from its JAR. Please contact the server admin if you're seeing this error while viewing the map of some server, or (if this is singleplayer / you're the admin and are sure you didn't mess anything up) contact Surwebyor devs on GitHub.".encodeToByteArray())
 	val LOGGER = LoggerFactory.getLogger(MOD_ID)
 
-	var CONFIG = Config(8080, 0, 0, "Surwebyor World Map", arrayOf())
+	var CONFIG = Config(8080, 0, 0, "Surwebyor World Map", "/",arrayOf())
 
 	private val LEVELS = HashMap<ResourceKey<Level>, Level>()
 	private var SERVER: EmbeddedServer<JettyApplicationEngine, JettyApplicationEngineBase.Configuration>? = null

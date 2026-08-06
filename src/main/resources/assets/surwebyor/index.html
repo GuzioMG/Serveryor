@@ -47,7 +47,7 @@
 
 			const map = L.map('map', {crs: L.CRS.Simple, zoomSnap: 0, zoomDelta: 0.25}).setView(xz($POSX, $POSZ), 4);
 			const popup = L.popup({maxWidth: 1000});
-			const tiles = L.tileLayer('/mapdata/minecraft/overworld/{x}/{y}/{z}/tile.png', {
+			const tiles = L.tileLayer('$PREFIXmapdata/minecraft/overworld/{x}/{y}/{z}/tile.png', {
 				tms: true, maxNativeZoom: 4, minNativeZoom: 2, maxZoom: 6,
 				attribution: '🇪🇺🇵🇱🦅 <a href="https://github.com/GuzioMG/Surwebyor">Surwebyor</a>'
 			}).addTo(map);
