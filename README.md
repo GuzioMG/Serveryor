@@ -15,16 +15,15 @@ A web-map frontend for [Surveyor Map Framework](https://modrinth.com/mod/surveyo
 Additionally, you'll need:
 * [Surveyor](https://modrinth.com/mod/surveyor)
 * A supported MC version (Fabric 1.22.1 only\* at the moment - higher versions are marked as supported in the JAR in case you want to try going higher, anyway, which **maybe** works because this mod almost doesn't interact with Minecraft APIs (the vast majority are Surveyor's), but it's untested and higher versions aren't marked as supported on Modrinth because of that)
-* Fabric API and Fabric Kotlin
-* \*Just like with Surveyor itself, NeoForge 1.21.1 via Sinytra is considered officially supported (though if you do that, please use Forgified Fabric API and Kotlin for Forge instead of Fabric API and Fabric Kotlin). Effectively, we treat Sinytra a library, no different from how other mod devs treat Cloth Config or Moonlight Lib.
+* [Fabric API](https://modrinth.com/mod/fabric-api) and [Fabric Kotlin](https://modrinth.com/mod/fabric-language-kotlin)
+* \*Just like with Surveyor itself, NeoForge 1.21.1 via [Sinytra](https://modrinth.com/mod/connector) is considered officially supported (though if you do that, please use [Forgified Fabric API](https://modrinth.com/mod/forgified-fabric-api) instead of Fabric API - Fabric Kotlin can stay, tho, no need to look for a Forge alternative, and they in fact wouldn't work, tho they *can be* present if needed by some other Forge mod). Effectively, we treat Sinytra a multi-loader library, no different from how other mod devs would treat, for example, Architectury or Moonlight Lib.
 
 ## Usage
 * Get the mod and the dependencies (see above)
-* Make sure you have, or any of your players have, any other Surveyor-enabled map mod installed, so that you'll actually be generating terrain exploration data as you load chunks in the world (alternatively, you can force-enable terrain gen in the config of Surveyor)
 * Configure (see below)
 * Open http://0.0.0.0:8080 (optionally replace `0.0.0.0` with your server IP/domian if running on a server (and `http://` with `https://`, if said domain is HTTPS-enabled) and `8080` with any other port you chose in the config) in your browser
-* Witness *the glory of Surveyor, in the tab of your browser!*
-That's right! No terrain pre-generation that takes 20 years to complete and eats 5TB! It *just works*! All map tiles are generated live, as you request them. Take that, DynMap!
+* Witness *the power of Surveyor, in the tab of your browser!*
+That's right! No tile pre-generation that takes 20 years to complete and eats 5TB! It *just works*! All map tiles are generated live, as you request them. Take that, DynMap!
 
 ### Help! I uploaded this onto a server, and now all my biomes look the same!
 *See: Early alpha alert.*
@@ -52,8 +51,11 @@ Fields mean the following
 * The icon is literally just a cutout from Surveyor's banner that I superimposed a `w` (instead of v) and a `b` onto, so I'm not even trying to call dibs on it in any way because that's probably not gonna fly. xD
 * You cannot directly reuse the Surwebyor name (at least add some prefix, suffix, or something) for any fork or (especially) unrelated projects.
 
+## That's all!
+Hope you enjoy this silly little project :3
+
 ## Reverse-engineered color data
-Private note; disregard it.
+A private note about PNG's long-color and MC's int-color, and how they map onto RGB colors; it's fine if you have no idea what you're looking at, feel free to disregard it.
 ```
 ALPHA   00000000 00000000 00000000 00000000 00000000 00000000 00000000 11111111   0000000000000000000000000000000000000000000000000000000011111111   255
 BLUE    00000000 00000000 00000000 00000000 00000000 11111111 00000000 00000000   0000000000000000000000000000000000000000111111110000000000000000   16711680

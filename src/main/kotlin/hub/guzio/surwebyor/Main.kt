@@ -1,5 +1,6 @@
 package hub.guzio.surwebyor
 
+import folk.sisby.surveyor.WorldSummary
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.engine.*
@@ -34,6 +35,9 @@ object Main : ModInitializer {
 	private val JSON = Json { ignoreUnknownKeys = true }
 
 	override fun onInitialize() {
+		LOGGER.info("Surwebyor is its calling sugar-mommy (Surveyor).  OwO")
+		WorldSummary.enableTerrain()
+
 		try {
 			CONFIG = JSON.decodeFromString<Config>(FabricLoader.getInstance().configDir.resolve(CONFIGNAME).toFile().readText())
 			LOGGER.info("User-provided Surwebyor config loaded successfully!")
@@ -53,7 +57,7 @@ object Main : ModInitializer {
 			}
 		}
 
-		LOGGER.info("Surwebyor is registering events....")
+		LOGGER.info("Surwebyor is registering events...")
 		ServerWorldEvents.LOAD.register { _, level ->
 			LOGGER.info("Surwebyor detected a new ${level.dimension()}")
 			LEVELS[level.dimension()] = level

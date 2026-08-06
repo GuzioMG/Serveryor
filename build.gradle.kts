@@ -56,6 +56,20 @@ dependencies {
 	//KTor:
 	implementation(ktorLibs.server.core)
 	implementation(ktorLibs.server.jetty)
+	include(ktorLibs.server.core)
+	include(ktorLibs.server.jetty)
+	include(ktorLibs.utils)
+	include(ktorLibs.events)
+	include(ktorLibs.io)
+	include(ktorLibs.http)
+	include("org.eclipse.jetty:jetty-server:12.0.35")
+	include("org.eclipse.jetty:jetty-http:12.0.35")
+	include("org.eclipse.jetty:jetty-io:12.0.35")
+	include("org.eclipse.jetty:jetty-util:12.0.35")
+	include("org.eclipse.jetty.http2:jetty-http2:12.0.35")
+	include("org.eclipse.jetty.http2:jetty-http2-common:12.0.35")
+	include("org.eclipse.jetty.http2:jetty-http2-server:12.0.35")
+	include("org.eclipse.jetty.http2:jetty-http2-hpack:12.0.35")
 
 	//Extra things to auto-download by Fabric Loom; added here for convenience during dev (I need a map to compare to, and Mod Menu to see if I have all my metadata in check):
 	modImplementation("maven.modrinth:hoofprint:1.3.0+1.21")
