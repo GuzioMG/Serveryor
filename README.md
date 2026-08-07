@@ -31,7 +31,7 @@ That's right! No tile pre-generation that takes 20 years to complete and eats 5T
 ### Config
 Configured via `surwebyor.json` in your `config` folder. The default one is:
 ```json
-{"port":8080,"defaultX":0,"defaultZ":0,"title":"Surwebyor World Map","biomes":[]}
+{"port":8080,"defaultX":0,"defaultZ":0,"title":"Surwebyor World Map","prefix":"/","biomes":[]}
 ```
 ...but you're free to format it, to be more readable (we won't overwrite it for you, like some mods do, as long as there are no loading errors).
 
@@ -39,6 +39,7 @@ Fields mean the following
 * `port`: The port over which the webmap will be exposed over to the internet. Please note that when you're using this on a server, **you need to forward this port alongside Minecraft's typical one. We'll NOT help you with port-forwarding.** If your hosting doesn't let you forward arbitrary ports, self-host. If your ISP doesn't - find a better ISP.
 * `defaultX` and `defaultZ`: Where should the map open by default
 * `title`: The title of the website with the map
+* `prefix` *(since v0.4)*: At which endpoint can the mod's API be accessed? Useful when you're exposing the map from behind a reverse proxy, alongside eg. your server's website. Note, that this only applies to SENDING requests from the frontend; the backend will always listen on `/`, so you need to adjust path rewrites accordingly in your proxy's config. Must end with a `/`, unless you did something very cursed with said path rewriting (if you're curious why, please see `index.html` inside this repo, to see how is this value used). **If you have no idea what any of this means - YOU ALMOST CERTAINLY DON'T NEED TO CHANGE IT!**
 * `biomes`: *See: Early alpha alert.*
 
 ### In-game commands
